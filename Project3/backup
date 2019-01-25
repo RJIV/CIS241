@@ -1,0 +1,74 @@
+#!/bin/bash
+
+if [[ $# = 0 ]]
+then
+	echo "Must provide at least one argument!"
+	exit
+fi
+
+argc=0
+
+for i 
+do
+	if [ "$i" = "-l" ]
+	then
+		let argc=$argc+1
+	elif [ "$i" = "-c" ]
+	then
+		let argc=$argc+1
+	elif [ "$i" = "--help" ]
+	then
+		let argc=$argc+1
+	fi
+done
+
+if [ ! -d ~/backup ]
+then
+	mkdir ~/backup
+fi
+
+let numFiles=$#-$argc
+
+
+
+count=0
+
+for i
+do
+	if [[ $count = $numFiles ]]
+	then
+		break
+	fi
+
+	if [ -e "$1" ]
+	then
+		cp -R $1 ~/backup
+	else
+		echo "$1 does not exist!"
+	fi
+	shift
+	let count=$count+1
+done
+
+for i 
+do
+	if [ "$i" = "-c" ]
+	then
+		echo "Number of files and directories: $(ls ~/backup | wc -l)"
+		echo "Number of Bytes: "
+		du -b ~/backup
+	elif [ "$i" = "-l" ]
+	then
+		echo "Files and directories in backup folder: " 
+		ls ~/backup
+	elif [ "$i" = "--help" ]
+	then
+		echo "Proper usage of this script: "
+		echo "./backup file1 file2 file3 -c -l --help"
+		echo "-c : The -c option shows the number of files and directories in the backup subdirectory in your home directory, and the amount of bytes they consume."
+		echo "-l : The -l option lists files and directories of the backup subdirectory in your home directory, just like ls."
+		echo "--help : The --help option displays a brief description about how to run this script as well as each of the options."
+	fi
+done
+
+
